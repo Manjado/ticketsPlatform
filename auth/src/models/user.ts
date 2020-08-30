@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Password } from '../services/password';
 
 // AN interface that describes the properties
 // that are required to create a new User
@@ -29,6 +30,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+});
+
+// we must use function insted arrow function because of this context
+// mongoose is old and has problem with async function
+// and this is the main reason of using done
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    //first add password is tread as modified
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
+    done();
+  }
 });
 
 userSchema.statics.build = (attrs: UserAttrs) => {
