@@ -5,18 +5,19 @@ class NatsWrapper {
 
   get client() {
     if (!this._client) {
-      throw new Error('Cannot access NATS client before xonnecting');
+      throw new Error('Cannot access NATS client before connecting');
     }
+
     return this._client;
   }
 
   connect(clusterId: string, clientId: string, url: string) {
     this._client = nats.connect(clusterId, clientId, { url });
-    console.log('KONRCT');
-
+    console.log(this._client, 'this._client');
     return new Promise((resolve, reject) => {
+      console.log(this.client.on, 'this.client');
       this.client.on('connect', () => {
-        console.log('Connected to NATS_');
+        console.log('Connected to NATS');
         resolve();
       });
       this.client.on('error', (err) => {
