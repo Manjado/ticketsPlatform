@@ -1,14 +1,15 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {
-  requireAuth,
   validateRequest,
   NotFoundError,
+  requireAuth,
   NotAuthorizedError,
 } from '@webma/common';
 import { Ticket } from '../models/ticket';
-import { TicketUpdatedPulisher } from '../events/publishers/ticket-updated-publisher';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 import { natsWrapper } from '../nats-wrapper';
+
 const router = express.Router();
 
 router.put(
@@ -37,8 +38,7 @@ router.put(
       price: req.body.price,
     });
     await ticket.save();
-
-    new TicketUpdatedPulisher(natsWrapper.client).publish({
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
       title: ticket.title,
       price: ticket.price,

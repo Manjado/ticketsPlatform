@@ -2,8 +2,9 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { requireAuth, validateRequest } from '@webma/common';
 import { Ticket } from '../models/ticket';
-import { TicetCreatedPublisher } from '../events/publishers/ticket-created-publisher';
+import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
+
 const router = express.Router();
 
 router.post(
@@ -13,7 +14,7 @@ router.post(
     body('title').not().isEmpty().withMessage('Title is required'),
     body('price')
       .isFloat({ gt: 0 })
-      .withMessage('Price must be greater then 0'),
+      .withMessage('Price must be greater than 0'),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -25,8 +26,7 @@ router.post(
       userId: req.currentUser!.id,
     });
     await ticket.save();
-
-    new TicetCreatedPublisher(natsWrapper.client).publish({
+    await new TicketCreatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
       title: ticket.title,
       price: ticket.price,
