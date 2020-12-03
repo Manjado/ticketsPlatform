@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/bull": "^3.14.4",
-    "@webma/common": "^1.0.10",
+    "@webma/common": "^1.0.11",
     "bull": "^3.20.0",
     "node-nats-streaming": "^0.3.2",
     "ts-node-dev": "^1.0.0-pre.57",
